@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.chao.myapplication.DisplayPrimaryUserActivity">
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="119dp"
+        android:onClick="ButtonOnClick"
+        android:text="6"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button0"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="347dp"
+        android:onClick="ButtonOnClick"
+        android:text="0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button8"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="233dp"
+        android:onClick="ButtonOnClick"
+        android:text="8"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="233dp"
+        android:onClick="ButtonOnClick"
+        android:text="7"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="119dp"
+        android:onClick="ButtonOnClick"
+        android:text="5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="119dp"
+        android:onClick="ButtonOnClick"
+        android:text="4"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="233dp"
+        android:onClick="ButtonOnClick"
+        android:text="9"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="5dp"
+        android:onClick="ButtonOnClick"
+        android:text="3"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="5dp"
+        android:text="2"
+        android:onClick="ButtonOnClick"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="128dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="5dp"
+        android:text="1"
+        android:onClick="ButtonOnClick"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="73dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="156dp"
+        android:text="reset"
+        android:onClick="ButtonOnClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/sensor_view"
+        android:layout_width="101dp"
+        android:layout_height="122dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
