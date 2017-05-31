@@ -27,7 +27,8 @@
         </activity>
         <activity android:name=".UnlockActivity" />
         <activity android:name=".DisplayTestUserActivity" />
-        <activity android:name=".DisplayPrimaryUserActivity"></activity>
+        <activity android:name=".DisplayPrimaryUserActivity" />
+
     </application>
 
 </manifest>

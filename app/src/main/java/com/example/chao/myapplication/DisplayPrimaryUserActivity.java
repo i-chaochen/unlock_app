@@ -19,8 +19,6 @@ import java.util.List;
 public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     public static final int password_len = 4;
-    // to indicate there is a password has been stored or not
-    public static boolean password_flag = false;
 
     LinkedList<Integer> inputpassword_list = new LinkedList<>();
     LinkedList<Integer> storedpassword_list = new LinkedList<>();
@@ -56,7 +54,6 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         Button button7 = (Button)findViewById(R.id.button7);
         Button button8 = (Button)findViewById(R.id.button8);
         Button button9 = (Button)findViewById(R.id.button9);
-
         Button reset_button = (Button)findViewById(R.id.reset_button);
 
         button0.setOnClickListener(new clickListener());
@@ -69,8 +66,12 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         button7.setOnClickListener(new clickListener());
         button8.setOnClickListener(new clickListener());
         button9.setOnClickListener(new clickListener());
-
         reset_button.setOnClickListener(new clickListener());
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
 
         // for sensor
         tv1 = (TextView) findViewById(R.id.sensor_view);
@@ -82,6 +83,12 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Error No Accelerometer", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+    }
+
     @Override
     protected void onStop(){
         if (mList.size() > 0){
@@ -138,7 +145,6 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
                         storedpassword_list.clear();
                         inputpassword_list.clear();
                     }
-                    password_flag = false;
                     break;
                 default:
                     break;
@@ -149,12 +155,9 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
     private void processPassword(Integer input_integer){
         boolean wrong_flag = false;
         // this password has not stored
-        if (!password_flag){
+        if (storedpassword_list.size() != password_len){
             storedpassword_list.add(input_integer);
-            if (storedpassword_list.size() == password_len){
-                password_flag = true;
-            }
-        }else {
+        }else{
             inputpassword_list.add(input_integer);
             // verify this inputpassword_list
             // TODO: monitor and collect user input habits
@@ -164,13 +167,12 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
                 while (input_it.hasNext() && store_it.hasNext()){
                     if (input_it.next().intValue() != store_it.next().intValue()){
-                        wrong_flag = true;
                         Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_SHORT).show();
+                        wrong_flag = true;
                         break;
-                        }else{
-                        wrong_flag = false;
                     }
-                    }
+                }
+                // password correct
                 if (!wrong_flag){
                     Intent unlockIntent = new Intent();
                     unlockIntent.setClass(DisplayPrimaryUserActivity.this, UnlockActivity.class);
