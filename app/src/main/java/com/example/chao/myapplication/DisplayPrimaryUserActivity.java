@@ -5,8 +5,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+
 import android.widget.Button;
 import android.view.View;
 import android.widget.TextView;
@@ -25,19 +28,22 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     // for sensor
     SensorManager mSensorManger;
-    TextView tv1;
+    TextView tv1_accereaclate, tv2_location;
     List mList;
 
     SensorEventListener sensor_event_listener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             float[] values = event.values;
-            tv1.setText("x: " + values[0] + "\ny: " + values[1] + "\nz: " + values[2]);
+            tv1_accereaclate.setText("x: " + values[0] + "\ny: " + values[1] + "\nz: " + values[2]);
         }
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     };
 
+    // for motion listener
+    ConstraintLayout testLAyout;
+    float x, y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,41 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         button8.setOnClickListener(new clickListener());
         button9.setOnClickListener(new clickListener());
         reset_button.setOnClickListener(new clickListener());
+
+
+        // for touch listener
+        final Button motion_b = (Button)findViewById(R.id.motionTest);
+        testLAyout = (ConstraintLayout) findViewById(R.id.testLAyout);
+
+        testLAyout.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event){
+                x = event.getX();
+                y = event.getY();
+
+                tv2_location.setText("x: " + x + "\ny: " + y);
+                if (event.getAction() == MotionEvent.ACTION_MOVE){
+                    motion_b.setX(x);
+                    motion_b.setY(y);
+                }
+                return true;
+            }
+        });
+
+
+        button0.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event){
+                x = event.getX();
+                y = event.getY();
+
+                if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS){
+
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -74,7 +115,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         super.onStart();
 
         // for sensor
-        tv1 = (TextView) findViewById(R.id.sensor_view);
+        tv1_accereaclate = (TextView) findViewById(R.id.sensor_view);
         mSensorManger = (SensorManager) getSystemService(SENSOR_SERVICE);
         mList = mSensorManger.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (mList.size() > 0){
@@ -82,6 +123,9 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         }else{
             Toast.makeText(getBaseContext(), "Error No Accelerometer", Toast.LENGTH_SHORT).show();
         }
+
+        // for location
+        tv2_location = (TextView) findViewById(R.id.motionTest);
     }
 
     @Override
