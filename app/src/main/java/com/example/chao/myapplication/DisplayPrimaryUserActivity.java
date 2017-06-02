@@ -5,7 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -23,27 +22,32 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     public static final int password_len = 4;
 
-    LinkedList<Integer> inputpassword_list = new LinkedList<>();
-    LinkedList<Integer> storedpassword_list = new LinkedList<>();
+    LinkedList<InputObject> inputpassword_list = new LinkedList<>();
+    LinkedList<InputObject> storedpassword_list = new LinkedList<>();
 
     // for sensor
     SensorManager mSensorManger;
-    TextView tv1_accereaclate, tv2_location;
+    TextView tv1_display_only;
     List mList;
+    public static float[] sensor_values = new float[3];
+    public float[] location_values = new float[2];
 
     SensorEventListener sensor_event_listener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            float[] values = event.values;
-            tv1_accereaclate.setText("x: " + values[0] + "\ny: " + values[1] + "\nz: " + values[2]);
+            sensor_values = event.values;
+
+            tv1_display_only.setText("\nlocation_x: " + location_values[0] +
+                                    "\nlocation_y: " + location_values[1] +
+                                    "\nsensor_x: " + sensor_values[0] +
+                                    "\nsensor_y: " + sensor_values[1] +
+                                    "\nsensor_z: " + sensor_values[2]);
+
         }
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     };
 
-    // for motion listener
-    ConstraintLayout testLAyout;
-    float x, y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,51 +66,18 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         Button button9 = (Button)findViewById(R.id.button9);
         Button reset_button = (Button)findViewById(R.id.reset_button);
 
-        button0.setOnClickListener(new clickListener());
-        button1.setOnClickListener(new clickListener());
-        button2.setOnClickListener(new clickListener());
-        button3.setOnClickListener(new clickListener());
-        button4.setOnClickListener(new clickListener());
-        button5.setOnClickListener(new clickListener());
-        button6.setOnClickListener(new clickListener());
-        button7.setOnClickListener(new clickListener());
-        button8.setOnClickListener(new clickListener());
-        button9.setOnClickListener(new clickListener());
-        reset_button.setOnClickListener(new clickListener());
 
-
-        // for touch listener
-        final Button motion_b = (Button)findViewById(R.id.motionTest);
-        testLAyout = (ConstraintLayout) findViewById(R.id.testLAyout);
-
-        testLAyout.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event){
-                x = event.getX();
-                y = event.getY();
-
-                tv2_location.setText("x: " + x + "\ny: " + y);
-                if (event.getAction() == MotionEvent.ACTION_MOVE){
-                    motion_b.setX(x);
-                    motion_b.setY(y);
-                }
-                return true;
-            }
-        });
-
-
-        button0.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event){
-                x = event.getX();
-                y = event.getY();
-
-                if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS){
-
-                }
-                return true;
-            }
-        });
+        button0.setOnTouchListener(new ButtonTouchListener());
+        button1.setOnTouchListener(new ButtonTouchListener());
+        button2.setOnTouchListener(new ButtonTouchListener());
+        button3.setOnTouchListener(new ButtonTouchListener());
+        button4.setOnTouchListener(new ButtonTouchListener());
+        button5.setOnTouchListener(new ButtonTouchListener());
+        button6.setOnTouchListener(new ButtonTouchListener());
+        button7.setOnTouchListener(new ButtonTouchListener());
+        button8.setOnTouchListener(new ButtonTouchListener());
+        button9.setOnTouchListener(new ButtonTouchListener());
+        reset_button.setOnTouchListener(new ButtonTouchListener());
 
     }
 
@@ -115,7 +86,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         super.onStart();
 
         // for sensor
-        tv1_accereaclate = (TextView) findViewById(R.id.sensor_view);
+        tv1_display_only = (TextView) findViewById(R.id.sensor_view);
         mSensorManger = (SensorManager) getSystemService(SENSOR_SERVICE);
         mList = mSensorManger.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (mList.size() > 0){
@@ -124,8 +95,6 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Error No Accelerometer", Toast.LENGTH_SHORT).show();
         }
 
-        // for location
-        tv2_location = (TextView) findViewById(R.id.motionTest);
     }
 
     @Override
@@ -141,76 +110,143 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public class clickListener implements View.OnClickListener {
-        public void onClick(View view){
+    public class ButtonTouchListener implements View.OnTouchListener{
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event){
             switch (view.getId()){
                 case R.id.button0:
-                    Integer i0 = new Integer(0);
-                    processPassword(i0);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_0 = new InputObject(0, location_values, sensor_values);
+                        processInputObj(io_0);
+                    }
                     break;
+
                 case R.id.button1:
-                    Integer i1 = new Integer(1);
-                    processPassword(i1);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_1 = new InputObject(1, location_values, sensor_values);
+                        processInputObj(io_1);
+                    }
                     break;
+
                 case R.id.button2:
-                    Integer i2 = new Integer(2);
-                    processPassword(i2);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_2 = new InputObject(2, location_values, sensor_values);
+                        processInputObj(io_2);
+                    }
                     break;
+
                 case R.id.button3:
-                    Integer i3 = new Integer(3);
-                    processPassword(i3);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_3 = new InputObject(3, location_values, sensor_values);
+                        processInputObj(io_3);
+                    }
                     break;
+
                 case R.id.button4:
-                    Integer i4 = new Integer(4);
-                    processPassword(i4);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_4 = new InputObject(4, location_values, sensor_values);
+                        processInputObj(io_4);
+                    }
                     break;
+
                 case R.id.button5:
-                    Integer i5 = new Integer(5);
-                    processPassword(i5);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_5 = new InputObject(5, location_values, sensor_values);
+                        processInputObj(io_5);
+                    }
                     break;
+
                 case R.id.button6:
-                    Integer i6 = new Integer(6);
-                    processPassword(i6);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_6 = new InputObject(6, location_values, sensor_values);
+                        processInputObj(io_6);
+                    }
                     break;
+
                 case R.id.button7:
-                    Integer i7 = new Integer(7);
-                    processPassword(i7);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_7 = new InputObject(7, location_values, sensor_values);
+                        processInputObj(io_7);
+                    }
                     break;
+
                 case R.id.button8:
-                    Integer i8 = new Integer(8);
-                    processPassword(i8);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_8 = new InputObject(8, location_values, sensor_values);
+                        processInputObj(io_8);
+                    }
                     break;
+
                 case R.id.button9:
-                    Integer i9 = new Integer(9);
-                    processPassword(i9);
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+                        InputObject io_9 = new InputObject(9, location_values, sensor_values);
+                        processInputObj(io_9);
+                    }
                     break;
+
                 case R.id.reset_button:
-                    if (storedpassword_list.size() != 0){
+                    location_values[0] = event.getX();
+                    location_values[1] = event.getY();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN && storedpassword_list.size() != 0){
                         storedpassword_list.clear();
                         inputpassword_list.clear();
                     }
                     break;
+
                 default:
                     break;
             }
+            return true;
         }
     }
 
-    private void processPassword(Integer input_integer){
+
+    private void processInputObj(InputObject inputObject){
         boolean wrong_flag = false;
-        // this password has not stored
+
         if (storedpassword_list.size() != password_len){
-            storedpassword_list.add(input_integer);
+            storedpassword_list.add(inputObject);
         }else{
-            inputpassword_list.add(input_integer);
-            // verify this inputpassword_list
-            // TODO: monitor and collect user input habits
+            inputpassword_list.add(inputObject);
+            // verify this input password
             if (inputpassword_list.size() == password_len){
-                Iterator<Integer> input_it = inputpassword_list.iterator();
-                Iterator<Integer> store_it = storedpassword_list.iterator();
+                Iterator<InputObject> input_it = inputpassword_list.iterator();
+                Iterator<InputObject> store_it = storedpassword_list.iterator();
 
                 while (input_it.hasNext() && store_it.hasNext()){
-                    if (input_it.next().intValue() != store_it.next().intValue()){
+                    if (input_it.next().getInputDigit() != store_it.next().getInputDigit()){
                         Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_SHORT).show();
                         wrong_flag = true;
                         break;
@@ -225,6 +261,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
                 inputpassword_list.clear();
             }
         }
+
     }
 }
 
