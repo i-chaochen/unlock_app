@@ -1,12 +1,17 @@
 package com.example.chao.myapplication;
 
+
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import android.util.Log;
 import android.view.MotionEvent;
 
 import android.widget.Button;
@@ -14,6 +19,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,17 +47,19 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         public void onSensorChanged(SensorEvent event) {
             sensor_values = event.values;
 
+            saveToCsv(location_values, sensor_values);
             tv1_display_only.setText("\nlocation_x: " + location_values[0] +
                                     "\nlocation_y: " + location_values[1] +
                                     "\nsensor_x: " + sensor_values[0] +
                                     "\nsensor_y: " + sensor_values[1] +
                                     "\nsensor_z: " + sensor_values[2]);
-
         }
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     };
 
+    // for saving csv file
+    String fileName = "collectedData.csv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +90,6 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         button8.setOnTouchListener(new ButtonTouchListener());
         button9.setOnTouchListener(new ButtonTouchListener());
         reset_button.setOnTouchListener(new ButtonTouchListener());
-
     }
 
     @Override
@@ -90,7 +101,8 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         mSensorManger = (SensorManager) getSystemService(SENSOR_SERVICE);
         mList = mSensorManger.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (mList.size() > 0){
-            mSensorManger.registerListener(sensor_event_listener, (Sensor) mList.get(0), SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManger.registerListener(sensor_event_listener, (Sensor) mList.get(0),
+                                            SensorManager.SENSOR_DELAY_NORMAL);
         }else{
             Toast.makeText(getBaseContext(), "Error No Accelerometer", Toast.LENGTH_SHORT).show();
         }
@@ -232,7 +244,6 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         }
     }
 
-
     private void processInputObj(InputObject inputObject){
         boolean wrong_flag = false;
 
@@ -263,6 +274,36 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         }
 
     }
+
+    private void saveToCsv(float[] location_values, float[] sensor_values){
+
+        Calendar curr_cal = Calendar.getInstance();
+
+
+        FileWriter fileWriter;
+        File path = new File(Environment.getExternalStorageDirectory() + fileName);
+        Log.d("TAG", path.getPath());
+      //File path = getFilesDir();
+       // File path = Environment.getExternalStoragePublicDirectory(Environment.DI‌​RECTORY_DOWNLOADS);
+
+
+        String csv = fileName;
+        try {
+            fileWriter = new FileWriter(csv, true);
+            String input_string = curr_cal.get(Calendar.HOUR) + "," + curr_cal.get(Calendar.MINUTE) + "," + curr_cal.get(Calendar.SECOND)
+                                  + "," + curr_cal.get(Calendar.MILLISECOND) + "," + location_values[0] + "," + location_values[1] + ","
+                                  + "," + sensor_values[0] + "," + sensor_values[1] + "," + sensor_values[2] + "\n";
+
+            fileWriter.append(input_string);
+            fileWriter.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+    }
+
 }
 
 

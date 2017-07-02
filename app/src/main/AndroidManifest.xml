@@ -28,7 +28,7 @@
         <activity android:name=".UnlockActivity" />
         <activity android:name=".DisplayTestUserActivity" />
         <activity android:name=".DisplayPrimaryUserActivity" />
-
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     </application>
 
 </manifest>
