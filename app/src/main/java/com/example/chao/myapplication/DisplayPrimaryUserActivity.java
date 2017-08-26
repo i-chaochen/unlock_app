@@ -2,12 +2,14 @@ package com.example.chao.myapplication;
 
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -19,11 +21,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,29 +34,32 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     // for sensor
     SensorManager mSensorManger;
-    TextView tv1_display_only;
+//    TextView tv1_display_only;
     List mList;
     public static float[] sensor_values = new float[3];
     public float[] location_values = new float[2];
+
+    FileHelper fileHelper = new FileHelper();
 
     SensorEventListener sensor_event_listener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             sensor_values = event.values;
-
-            saveToCsv(location_values, sensor_values);
-            tv1_display_only.setText("\nlocation_x: " + location_values[0] +
-                                    "\nlocation_y: " + location_values[1] +
-                                    "\nsensor_x: " + sensor_values[0] +
-                                    "\nsensor_y: " + sensor_values[1] +
-                                    "\nsensor_z: " + sensor_values[2]);
+            //askPermissionAndWriteFile();
+            // display only
+            //tv1_display_only.setText("\nlocation_x: " + location_values[0] +
+            //                        "\nlocation_y: " + location_values[1] +
+            //                        "\nsensor_x: " + sensor_values[0] +
+            //                        "\nsensor_y: " + sensor_values[1] +
+            //                        "\nsensor_z: " + sensor_values[2]);
         }
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     };
 
     // for saving csv file
-    String fileName = "collectedData.csv";
+//    private static final int REQUEST_ID_WRITE_PERMISSION = 200;
+//    private final String fileName = "collectedData.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +90,13 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         button8.setOnTouchListener(new ButtonTouchListener());
         button9.setOnTouchListener(new ButtonTouchListener());
         reset_button.setOnTouchListener(new ButtonTouchListener());
+
+        //Button readButton = (Button) findViewById(R.id.button_read);
+        //readButton.setOnTouchListener(new ButtonTouchListener());
+
+//        askPermissionAndCreateFile();
+        fileHelper.askPermissionAndCreateFile();
+
     }
 
     @Override
@@ -97,7 +104,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         super.onStart();
 
         // for sensor
-        tv1_display_only = (TextView) findViewById(R.id.sensor_view);
+        //tv1_display_only = (TextView) findViewById(R.id.sensor_view);
         mSensorManger = (SensorManager) getSystemService(SENSOR_SERVICE);
         mList = mSensorManger.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (mList.size() > 0){
@@ -106,7 +113,6 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         }else{
             Toast.makeText(getBaseContext(), "Error No Accelerometer", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
@@ -237,6 +243,12 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
                     }
                     break;
 
+//                case R.id.button_read:
+//                    if (event.getAction() == MotionEvent.ACTION_DOWN){
+//                        askPermissionAndReadFile();
+//                    }
+//                    break;
+
                 default:
                     break;
             }
@@ -246,7 +258,8 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     private void processInputObj(InputObject inputObject){
         boolean wrong_flag = false;
-
+        // TODO: decide when to add:
+        //    fileHelper.askPermissionAndWriteFile(inputpassword_list, location_values, sensor_values);
         if (storedpassword_list.size() != password_len){
             storedpassword_list.add(inputObject);
         }else{
@@ -275,35 +288,82 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     }
 
-    private void saveToCsv(float[] location_values, float[] sensor_values){
+//    private boolean askPermission(int requestId, String permissionName){
+//        if (android.os.Build.VERSION.SDK_INT >= 23) {
+//            int permission = ActivityCompat.checkSelfPermission(this, permissionName);
+//
+//            if (permission != PackageManager.PERMISSION_GRANTED) {
+//                this.requestPermissions(
+//                        new String[]{permissionName},
+//                        requestId
+//                );
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
-        Calendar curr_cal = Calendar.getInstance();
-
-
-        FileWriter fileWriter;
-        File path = new File(Environment.getExternalStorageDirectory() + fileName);
-        Log.d("TAG", path.getPath());
-      //File path = getFilesDir();
-       // File path = Environment.getExternalStoragePublicDirectory(Environment.DI‌​RECTORY_DOWNLOADS);
-
-
-        String csv = fileName;
-        try {
-            fileWriter = new FileWriter(csv, true);
-            String input_string = curr_cal.get(Calendar.HOUR) + "," + curr_cal.get(Calendar.MINUTE) + "," + curr_cal.get(Calendar.SECOND)
-                                  + "," + curr_cal.get(Calendar.MILLISECOND) + "," + location_values[0] + "," + location_values[1] + ","
-                                  + "," + sensor_values[0] + "," + sensor_values[1] + "," + sensor_values[2] + "\n";
-
-            fileWriter.append(input_string);
-            fileWriter.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-    }
-
+//    private void askPermissionAndWriteFile() {
+//        boolean canWrite = this.askPermission(REQUEST_ID_WRITE_PERMISSION,
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//
+//        if (canWrite) {
+//            //Toast.makeText(getApplicationContext(), "canWrite Success",  Toast.LENGTH_SHORT).show();
+//            this.saveToCsv();
+//        }else{
+//            Toast.makeText(getApplicationContext(), "canWrite Failed",  Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    private void askPermissionAndCreateFile(){
+//        boolean canCreate = this.askPermission(REQUEST_ID_WRITE_PERMISSION,
+//                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//
+//        if (canCreate){
+//            File extStore = Environment.getExternalStorageDirectory();
+//            String path = extStore.getAbsolutePath() + "/" + fileName;
+//            Log.i("ExternalStorage", "save to: " + path);
+//
+//            try {
+//                File collected_db = new File(path);
+//                collected_db.createNewFile();
+//            } catch (IOException e){
+//                e.printStackTrace();
+//            }
+//        }else
+//            Toast.makeText(getApplicationContext(), "canCreate failed", Toast.LENGTH_SHORT).show();
+//    }
+//
+//    private void saveToCsv(){
+//        //Toast.makeText(getApplicationContext(), "Write Test",  Toast.LENGTH_SHORT).show();
+//
+//        Calendar curr_cal = Calendar.getInstance();
+//        File extStore = Environment.getExternalStorageDirectory();
+//
+//        // ==> /storage/emulated/0/collectedData.csv
+//        String filePath = extStore.getAbsolutePath() + "/" + fileName;
+//        //Log.i("ExternalStorage", "save to: " + path);
+//
+//        String collected_data = curr_cal.get(Calendar.HOUR) + "," + curr_cal.get(Calendar.MINUTE) + ","
+//                              + curr_cal.get(Calendar.SECOND) + "," + curr_cal.get(Calendar.MILLISECOND) + ","
+//                              + inputpassword_list.size() + "," + location_values[0] + "," + location_values[1] + ","
+//                              + sensor_values[0] + "," + sensor_values[1] + "," + sensor_values[2] + "\n";
+//
+//        try {
+//            //File myFile = new File(path);
+//            //myFile.createNewFile();
+//            FileOutputStream fOut = new FileOutputStream(filePath);
+//            OutputStreamWriter myOutWrite = new OutputStreamWriter(fOut);
+//
+//            myOutWrite.append(collected_data);
+//            myOutWrite.close();
+//            fOut.close();
+//            //Toast.makeText(getApplicationContext(), fileName + " saved", Toast.LENGTH_SHORT).show();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//    }
 }
 
 
