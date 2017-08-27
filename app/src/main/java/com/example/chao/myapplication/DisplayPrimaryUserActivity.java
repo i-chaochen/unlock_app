@@ -69,7 +69,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     // for saving csv file
     private static final int REQUEST_ID_WRITE_PERMISSION = 200;
-    private final String fileName = "collectedData.txt";
+    private final String fileName = "collectedData.csv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
