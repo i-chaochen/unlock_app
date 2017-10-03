@@ -50,12 +50,13 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     //FileHelper fileHelper = new FileHelper();
 
+    char type_flag = 'n';
     SensorEventListener sensor_event_listener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             sensor_values = event.values;
             //fileHelper.askPermissionAndWriteFile(inputpassword_list, location_values, sensor_values);
-            //askPermissionAndWriteFile();
+            askPermissionAndWriteFile(type_flag);
             // display only
             //tv1_display_only.setText("\nlocation_x: " + location_values[0] +
             //                        "\nlocation_y: " + location_values[1] +
@@ -119,7 +120,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         mList = mSensorManger.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (mList.size() > 0){
             mSensorManger.registerListener(sensor_event_listener, (Sensor) mList.get(0),
-                                            SensorManager.SENSOR_DELAY_NORMAL);
+                                            SensorManager.SENSOR_DELAY_FASTEST);
         }else{
             Toast.makeText(getBaseContext(), "Error No Accelerometer", Toast.LENGTH_SHORT).show();
         }
@@ -268,12 +269,13 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
     private void processInputObj(InputObject inputObject){
         boolean wrong_flag = false;
+        char type_flag = 'y';
         if (storedpassword_list.size() != password_len){
             storedpassword_list.add(inputObject);
-            askPermissionAndWriteFile();
+            askPermissionAndWriteFile(type_flag);
         }else{
             inputpassword_list.add(inputObject);
-            askPermissionAndWriteFile();
+            askPermissionAndWriteFile(type_flag);
             // verify this input password
             if (inputpassword_list.size() == password_len){
                 Iterator<InputObject> input_it = inputpassword_list.iterator();
@@ -313,12 +315,12 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
         return true;
     }
 
-    private void askPermissionAndWriteFile() {
+    private void askPermissionAndWriteFile(char type_flag) {
         boolean canWrite = this.askPermission(REQUEST_ID_WRITE_PERMISSION,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (canWrite) {
-            this.saveToCsv();
+            this.saveToCsv(type_flag);
         }else{
             Toast.makeText(getApplicationContext(), "canWrite Failed",  Toast.LENGTH_SHORT).show();
         }
@@ -343,7 +345,7 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "canCreate failed", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveToCsv(){
+    private void saveToCsv(char type_flag){
 
         Calendar curr_cal = Calendar.getInstance();
         File extStore = Environment.getExternalStorageDirectory();
@@ -357,7 +359,8 @@ public class DisplayPrimaryUserActivity extends AppCompatActivity {
 
         String collected_data = curr_cal.get(Calendar.HOUR) + "," + curr_cal.get(Calendar.MINUTE) + ","
                               + curr_cal.get(Calendar.SECOND) + "," + curr_cal.get(Calendar.MILLISECOND) + ","
-                              + inputpassword_list.size() + "," + location_values[0] + "," + location_values[1] + ","
+                              + inputpassword_list.size() + "," + type_flag + ","
+                              + location_values[0] + "," + location_values[1] + ","
                               + sensor_values[0] + "," + sensor_values[1] + "," + sensor_values[2] + "\n";
 
         try {
